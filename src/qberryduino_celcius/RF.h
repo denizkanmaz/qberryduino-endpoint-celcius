@@ -12,7 +12,9 @@
 //  this program. If not, see <http://www.gnu.org/licenses/>.
 
 //	Description: "RF.h" is a helper class that includes functions
-//  to use functionalities of RF24L01 transeiver.
+//  to use functionalities of RF24L01 transeiver. More details,
+//  refer to documentation of the wrapped library:
+//  http://tmrh20.github.io/RF24/classRF24.html
 
 #include <stdint.h>
 #include <SPI.h>
@@ -30,7 +32,8 @@ class RF
     RF24* _radio;
 
   public:
-    void init(int rx, int tx, uint64_t pipe);
+    RF(int rx, int tx, uint64_t pipe);
+    RF();
     void enableWriting();
     void disableWriting();
     void enableReading();
