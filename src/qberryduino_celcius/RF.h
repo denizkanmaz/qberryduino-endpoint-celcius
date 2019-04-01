@@ -29,10 +29,12 @@ class RF
 
     RF24* _radio;
 
+  public:
+    void init(int rx, int tx, uint64_t pipe);
     void enableWriting();
     void disableWriting();
     void enableReading();
     void disableReading();
-  public:
-    void init(int rx, int tx, uint64_t pipe);
+    boolean available();
+    char read();
 };

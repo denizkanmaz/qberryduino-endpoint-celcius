@@ -15,24 +15,42 @@
 
 #include "RF.h"
 #include "Arduino.h"
- 
 
-void RF::init(int rx, int tx, uint64_t pipe) {
-  
+
+void RF::init(int rx
+              , int tx
+              , uint64_t pipe) {
+  _rx = rx;
+  _tx = tx;
+  _pipe = pipe;
+  _radio = new RF24(_rx, _tx); // CE, CSN
+  _radio -> begin();
 }
 
-void RF::enableWriting(){
-  
+void RF::enableWriting() {
 }
 
-void RF::disableWriting(){
-  
+void RF::disableWriting() {
+
 }
 
-void RF::enableReading(){
-  
+void RF::enableReading() {
+  _radio -> begin();
+  _radio -> openReadingPipe(0, _pipe);
+  _radio -> setPALevel(RF24_PA_MIN);
+  _radio -> startListening();
 }
 
-void RF::disableReading(){
-  
+void RF::disableReading() {
+
+}
+
+char RF::read() {
+  char txt = "";
+  _radio -> read(&txt, sizeof(txt));
+  return txt;
+}
+
+boolean RF::available() {
+  return _radio -> available();
 }

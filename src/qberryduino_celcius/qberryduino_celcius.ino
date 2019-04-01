@@ -20,13 +20,18 @@
 RF _rf;
 
 const uint64_t PIPE = 0xE8E8F0F0E1LL;
-int RF_RX = 9;
-int RF_TX = 10;
+int RF_RX = 9; // CE
+int RF_TX = 10; // CSN
 
 void setup() {
+  Serial.begin(9600);
   _rf.init(RF_RX, RF_TX, PIPE);
+  _rf.enableReading();
+  Serial.println("All set!");
 }
 
 void loop() {
-
+  if (_rf.available()) {
+    Serial.print(_rf.read());
+  }
 }
