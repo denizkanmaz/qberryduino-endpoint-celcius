@@ -16,10 +16,10 @@
 #include "RF.h"
 #include "Arduino.h"
 
-
-void RF::init(int rx
-              , int tx
-              , uint64_t pipe) {
+RF::RF() {}
+RF::RF(int rx
+       , int tx
+       , uint64_t pipe) {
   _rx = rx;
   _tx = tx;
   _pipe = pipe;
@@ -28,10 +28,11 @@ void RF::init(int rx
 }
 
 void RF::enableWriting() {
+  _radio -> openWritingPipe(_pipe);
 }
 
 void RF::disableWriting() {
-
+  // _radio -> closeWritingPipe(_pipe);
 }
 
 void RF::enableReading() {
@@ -42,7 +43,7 @@ void RF::enableReading() {
 }
 
 void RF::disableReading() {
-
+  _radio -> closeReadingPipe(_pipe);
 }
 
 char RF::read() {

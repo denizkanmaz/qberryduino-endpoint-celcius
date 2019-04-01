@@ -24,8 +24,9 @@ int RF_RX = 9; // CE
 int RF_TX = 10; // CSN
 
 void setup() {
+  
   Serial.begin(9600);
-  _rf.init(RF_RX, RF_TX, PIPE);
+  _rf = RF(RF_RX, RF_TX, PIPE);
   _rf.enableReading();
   Serial.println("All set!");
 }
