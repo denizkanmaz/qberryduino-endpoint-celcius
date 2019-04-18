@@ -28,6 +28,7 @@ RF::RF(int rx
 }
 
 void RF::enableWriting() {
+  _radio -> begin();
   _radio -> openWritingPipe(_pipe);
 }
 
@@ -46,12 +47,39 @@ void RF::disableReading() {
   _radio -> closeReadingPipe(_pipe);
 }
 
-char RF::read() {
-  char txt = "";
-  _radio -> read(&txt, sizeof(txt));
-  return txt;
+String RF::readTill(char endChar, int timeout) {
+
+  _beginMillis = millis();
+
+  _currMessage = "";
+  int i = -1;
+
+  do {
+    while (_radio -> available() && (i == -1 || i == 0)) {
+      _radio -> read(&_currChars, sizeof(_currChars));
+      _currMessage.concat(_currChars);
+      i = (String(_currChars).indexOf(String(endChar)));
+    }
+
+    Serial.println(i);
+
+  } while ((millis() - _beginMillis < timeout) && i == -1);
+
+  return _currMessage;
 }
 
-boolean RF::available() {
-  return _radio -> available();
+void RF::write(String message) {
+  int messageSize = message.length();
+  Serial.println(message);
+  message.concat(" ");
+  for (int i = 0; i < messageSize; i = i + 31) {
+
+    String part = message.substring(i, i + 32);
+    char partChars[part.length()];
+    part.toCharArray(partChars, part.length());
+
+    _radio -> write(partChars, sizeof(partChars));
+
+    Serial.println(partChars);
+  }
 }

@@ -31,6 +31,10 @@ class RF
 
     RF24* _radio;
 
+    char _currChars[32];
+    unsigned long _beginMillis;
+    String _currMessage;
+
   public:
     RF(int rx, int tx, uint64_t pipe);
     RF();
@@ -38,6 +42,10 @@ class RF
     void disableWriting();
     void enableReading();
     void disableReading();
-    boolean available();
-    char read();
+    
+    // Reads the incoming messages comes throught
+    // the pipe till the end character comes or
+    // the time is out.
+    String readTill(char endChar, int timeout);
+    void write(String message);
 };

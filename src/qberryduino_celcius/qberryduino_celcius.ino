@@ -16,23 +16,67 @@
 //  (for instance, qberryduino-gateway-one) through the RF.
 
 #include "RF.h"
+#include <DHT.h>
+#define DHT11_PIN 5
+//#define DHTTYPE DHT11
+#define DHTTYPE DHT22
+#include "TEHUMessageFactory.h"
+
+DHT dht(DHT11_PIN, DHTTYPE);
 
 RF _rf;
 
+
+TEHUMessageFactory _tehuMF = TEHUMessageFactory();
+
+char devId [] = "123456789";
 const uint64_t PIPE = 0xE8E8F0F0E1LL;
 int RF_RX = 9; // CE
 int RF_TX = 10; // CSN
 
+class DHTValues {
+  public:
+    float temp;
+    float hum;
+};
+
+
 void setup() {
-  
+
   Serial.begin(9600);
+  Serial.println("I am celcius!");
+  dht.begin();
+
   _rf = RF(RF_RX, RF_TX, PIPE);
-  _rf.enableReading();
-  Serial.println("All set!");
+  _rf.enableWriting();
+
 }
 
+
+
+DHTValues getDHTValues() {
+
+  float hum = dht.readHumidity();
+  float temp = (float) dht.readTemperature();
+  Serial.println(hum);
+  Serial.println(temp);
+
+  DHTValues vals = DHTValues();
+  vals.temp =   temp;
+  vals.hum = hum;
+  return vals;
+}
+
+char  connId [] = "RF";
+
 void loop() {
-  if (_rf.available()) {
-    Serial.print(_rf.read());
-  }
+
+  DHTValues vals = getDHTValues();
+  delay(5000);
+  String td[2] = {String(vals.temp), String(vals.hum)};
+  String test = _tehuMF.create(devId
+                               , connId
+                               , td);
+  Serial.println(test);
+  _rf.write(test);
 }
